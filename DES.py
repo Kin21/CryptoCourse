@@ -77,6 +77,9 @@ def key_schedule(key, key_len, PCO_table, PCT_table, shifts_table):
 # For DES:
 #   Break E(R[i-1]) xor K[i] into eight 6-bit blocks.
 #   Bits 1-6 are B[1], bits 7-12 are B[2], and so on with bits 43-48 being B[8].
+# For SDES:
+#   Input block for S function will be 4 bits long,
+#   So here b_size = 4
 def break_into_B(block, block_size, b_size):
     mask = 2**b_size - 1
     B = []
@@ -106,6 +109,10 @@ def get_row_column(b, b_size):
 
 
 # Replace B[j] with S[j][m][n].
+# For SDES:
+#   Input block for S function will be 4 bits long,
+#   But the output value from S function will be 2 bits long,
+#   So here b_size = 2
 def perform_s_function(B, b_size, S):
     for j in range(len(S)):
         r, c = get_row_column(B[j], b_size)
@@ -230,9 +237,4 @@ def SDES_encrypt(data_block, key, encrypt=True):
 
 def SDES_decrypt(data_block, key):
     return SDES_encrypt(data_block, key, encrypt=False)
-
-m = int('01001100', 2)
-k = int('1111111111', 2)
-res = SDES_encrypt(m, k)
-print(bin(res))
 
